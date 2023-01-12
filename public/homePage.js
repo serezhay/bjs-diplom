@@ -2,15 +2,15 @@
 const btnExit = new LogoutButton;
 
 btnExit.action = () => {
-    ApiConnector.logout(callback => {
-        if (callback.success) {
+    ApiConnector.logout(result => {
+        if (result.success) {
             location.reload();
         }
     })
 }
 
 // Получение информации о пользователе
-ApiConnector.current(profileCallback = result => {
+ApiConnector.current(result => {
     result = ProfileWidget.showProfile(result.data);
 }) 
 
@@ -19,7 +19,7 @@ ApiConnector.current(profileCallback = result => {
 const course = new RatesBoard;
 
 function currentСourse () {
-    ApiConnector.getStocks(callback = (result) => {
+    ApiConnector.getStocks( (result) => {
         course.clearTable();
         course.fillTable(result.data);
     })
@@ -32,7 +32,7 @@ const moneyTransactions = new MoneyManager;
 
 // Реализуйте пополнение баланса:
 moneyTransactions.addMoneyCallback = (addMoney) => {
-        ApiConnector.addMoney(addMoney, callback = (result) => {
+        ApiConnector.addMoney(addMoney, (result) => {
             if(result.success) {
                 ProfileWidget.showProfile(result.data);
             }
@@ -43,7 +43,7 @@ moneyTransactions.addMoneyCallback = (addMoney) => {
 // Реализуйте конвертирование валюты
 moneyTransactions.conversionMoneyCallback = (convertMoney) => {
     console.log(convertMoney)
-    ApiConnector.convertMoney(convertMoney, callback = (result) => {
+    ApiConnector.convertMoney(convertMoney, (result) => {
         if( result.success) {
             ProfileWidget.showProfile(result.data);
         }
@@ -53,7 +53,7 @@ moneyTransactions.conversionMoneyCallback = (convertMoney) => {
 
 //Реализуйте перевод валюты
 moneyTransactions.sendMoneyCallback = (translationMoney) => {
-    ApiConnector.transferMoney(translationMoney, callback = (result) => {
+    ApiConnector.transferMoney(translationMoney, (result) => {
         if(result.success) {
             ProfileWidget.showProfile(result.data);
             ApiConnector.current();
@@ -66,7 +66,7 @@ moneyTransactions.sendMoneyCallback = (translationMoney) => {
 selectedUser = new FavoritesWidget;
 
 // Запросите начальный список избранного
-ApiConnector.getFavorites(callback = (result) => {
+ApiConnector.getFavorites( (result) => {
     if(result.success) {
         selectedUser.clearTable();
         selectedUser.fillTable(result.data);
@@ -76,24 +76,24 @@ ApiConnector.getFavorites(callback = (result) => {
 
 // Реализуйте добавления пользователя в список избранных
 selectedUser.addUserCallback = (addUser ) => {
-    ApiConnector.addUserToFavorites(addUser, callback = (result) => {
+    ApiConnector.addUserToFavorites(addUser, (result) => {
         if(result.success) {
             selectedUser.clearTable();
             selectedUser.fillTable(result.data);
             moneyTransactions.updateUsersList(result.data);
         }
-        moneyTransactions.setMessage(result.success, result.success? "Пользователь успешно дабавлен." : result.error);
+        selectedUser.setMessage(result.success, result.success? "Пользователь успешно дабавлен." : result.error);
     })
 }
 
 // Реализуйте удаление пользователя из избранного
 selectedUser.removeUserCallback = (deleteUser) => {
-    ApiConnector.removeUserFromFavorites(deleteUser, callback = (result) => {
+    ApiConnector.removeUserFromFavorites(deleteUser, (result) => {
         if(result.success) {
             selectedUser.clearTable();
             selectedUser.fillTable(result.data);
             moneyTransactions.updateUsersList(result.data);
         }
-        moneyTransactions.setMessage(result.success, result.success? "Пользователь успешно удален." : result.error);
+        selectedUser.setMessage(result.success, result.success? "Пользователь успешно удален." : result.error);
     });
 }
